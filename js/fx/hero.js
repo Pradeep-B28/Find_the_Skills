@@ -4,7 +4,7 @@
 
 import { SAMPLES } from "../../content/samples.js";
 import { scanPost } from "../content.js";
-import { renderFilm, getMarks } from "./film.js";
+import { renderFilm, getMarks, finishAll } from "./film.js";
 import { runScan } from "./beam.js";
 
 let heroContainer = null;
@@ -101,6 +101,24 @@ export function mountHero(parentEl) {
   const s1 = SAMPLES.find(s => s.id === "s1");
   const heroText = s1 ? s1.text.split("\n").slice(0, 7).join("\n") : "";
   const scanRes = scanPost(heroText);
+
+  const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefersReduced) {
+    // Show finished lit state, still, no tilt
+    renderFilm(bodyEl, {
+      text: heroText,
+      spans: scanRes.film,
+      truncated: false,
+      maxChars: 15000
+    });
+    finishAll(bodyEl);
+    bodyEl.classList.add("scan-finished");
+    beamEl.style.display = "none";
+    jobNum.textContent = String(scanRes.job.length);
+    softNum.textContent = String(scanRes.soft.length);
+    panel.style.transform = "none";
+    return heroContainer;
+  }
 
   // 3D tilt on laptop
   initTilt(heroContainer, panel);

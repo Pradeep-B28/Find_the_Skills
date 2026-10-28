@@ -112,10 +112,16 @@ export function enter({ onCheckAnother = null, onChangeTicks = null } = {}) {
     track.appendChild(fill);
     softLineRow.appendChild(track);
 
-    requestAnimationFrame(() => {
-      const softPct = Math.round((rep.soft.have.length / rep.soft.total) * 100);
+    const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const softPct = Math.round((rep.soft.have.length / rep.soft.total) * 100);
+    if (prefersReduced) {
+      fill.style.transition = "none";
       fill.style.width = `${softPct}%`;
-    });
+    } else {
+      requestAnimationFrame(() => {
+        fill.style.width = `${softPct}%`;
+      });
+    }
 
     leftCol.appendChild(softLineRow);
   }
@@ -238,9 +244,16 @@ export function enter({ onCheckAnother = null, onChangeTicks = null } = {}) {
   const sessionEl = renderSessionCard(cardModel);
   if (sessionEl) rightCol.appendChild(sessionEl);
 
-  // Share card
-  const shareEl = renderShareCard(cardModel);
-  if (shareEl) rightCol.appendChild(shareEl);
+  // Share card (hidden in presenter mode)
+  if (window.__JPX_PRESENTER__) {
+    const presP = document.createElement("p");
+    presP.className = "presenter-end";
+    presP.textContent = COPY.presenter.end;
+    rightCol.appendChild(presP);
+  } else {
+    const shareEl = renderShareCard(cardModel);
+    if (shareEl) rightCol.appendChild(shareEl);
+  }
 
   layoutGrid.appendChild(rightCol);
   containerEl.appendChild(layoutGrid);

@@ -401,6 +401,22 @@ export function enter({ onShowMatch = null } = {}) {
     });
     finishAll(b);
 
+    // Tap to tick: tapping a skill highlight inside "Show in the post" ticks/unticks that skill
+    b.style.cursor = "pointer";
+    b.addEventListener("click", (e) => {
+      const mark = e.target.closest(".film-mark:not(.hit-req)");
+      if (!mark) return;
+      const idsRaw = mark.getAttribute("data-ids");
+      if (!idsRaw) return;
+      const ids = idsRaw.split(",");
+      for (const id of ids) {
+        const chipBtn = document.querySelector(`.chip-btn[data-skill-id="${id}"]`);
+        if (chipBtn) {
+          chipBtn.click();
+        }
+      }
+    });
+
     postContent.appendChild(miniPanel);
     postDetails.appendChild(postContent);
     sidebar.appendChild(postDetails);

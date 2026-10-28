@@ -96,6 +96,12 @@ body::before {
   .bg-glow {
     animation: none !important;
   }
+  .hero-film-panel {
+    transform: none !important;
+  }
+  .film-beam-container {
+    display: none !important;
+  }
 }
 
 /* Tabular numbers for all numbers */
@@ -645,5 +651,48 @@ body::before {
 .banner-btn {
   align-self: flex-start;
 }
+
+/* Demo Mode Tap Dot */
+.demo-tap-dot {
+  position: fixed;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background-color: rgba(5, 150, 105, 0.45);
+  border: 2px solid #059669;
+  box-shadow: 0 0 14px rgba(5, 150, 105, 0.6);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: left 0.4s cubic-bezier(0.22, 1, 0.36, 1), top 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.15s ease, opacity 0.3s ease;
+}
+
+.demo-tap-dot.tapping {
+  transform: translate(-50%, -50%) scale(0.78);
+  background-color: rgba(5, 150, 105, 0.85);
+}
+
+/* Presenter Mode */
+[data-presenter="true"] .film-body {
+  font-size: 20px !important;
+  line-height: 1.65 !important;
+}
+
+[data-presenter="true"] .share-card,
+[data-presenter="true"] .cta-whatsapp-btn {
+  display: none !important;
+}
+
+.presenter-end {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--brand);
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--brand-soft);
+  border: 1px solid var(--brand);
+  border-radius: var(--radius-card);
+}
+
 
 

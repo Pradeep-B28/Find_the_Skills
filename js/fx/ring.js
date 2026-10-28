@@ -106,9 +106,16 @@ export function renderRing({ container, have = 0, total = 0, kind = "job" }) {
 
   // Trigger animations
   const targetOffset = total > 0 ? circumference * (1 - have / total) : circumference;
+  const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  requestAnimationFrame(() => {
+  if (prefersReduced) {
+    fill.style.transition = "none";
     fill.style.strokeDashoffset = String(targetOffset);
-    countUp(numSpan, have, 900);
-  });
+    numSpan.textContent = String(have);
+  } else {
+    requestAnimationFrame(() => {
+      fill.style.strokeDashoffset = String(targetOffset);
+      countUp(numSpan, have, 900);
+    });
+  }
 }

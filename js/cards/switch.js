@@ -105,12 +105,12 @@ export function render({ report, roleObj }) {
     const progUrl = utmLink(progPage || CONFIG.website, "switch");
     const waUrl = salesUrl(CONFIG.salesWhatsApp, { role: roleObj }, report);
 
-    if (waUrl) {
+    if (waUrl && !window.__JPX_PRESENTER__) {
       const waBtn = document.createElement("a");
       waBtn.href = waUrl;
       waBtn.target = "_blank";
       waBtn.rel = "noopener";
-      waBtn.className = "btn btn-primary";
+      waBtn.className = "btn btn-primary cta-whatsapp-btn";
       waBtn.textContent = COPY.cta.whatsapp;
       actions.appendChild(waBtn);
 

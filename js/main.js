@@ -1,5 +1,5 @@
-// What it does: entry point for the web app, handles router initialization, URL flags, theme, and sound.
-// Uses: config.js, js/store.js, js/router.js, js/fx/sound.js.
+// What it does: entry point for the web app, handles router initialization, URL flags, theme, sound, and analytics.
+// Uses: config.js, js/store.js, js/router.js, js/fx/sound.js, js/analytics.js.
 // Used by: index.html.
 
 import { CONFIG } from "../config.js";
@@ -9,19 +9,40 @@ import { init as initRouter, navigate } from "./router.js";
 
 let lastPostText = "";
 
+function updateThemeIcon(theme) {
+  const icon = document.getElementById("theme-icon");
+  const btn = document.getElementById("btn-theme");
+  if (!icon || !btn) return;
+  while (icon.firstChild) {
+    icon.removeChild(icon.firstChild);
+  }
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  if (theme === "dark") {
+    path.setAttribute("d", "M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z");
+    btn.setAttribute("aria-label", "Switch to light theme");
+    btn.setAttribute("title", "Switch to light theme");
+  } else {
+    path.setAttribute("d", "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z");
+    btn.setAttribute("aria-label", "Switch to dark theme");
+    btn.setAttribute("title", "Switch to dark theme");
+  }
+  icon.appendChild(path);
+}
+
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   setTheme(theme);
+  updateThemeIcon(theme);
 }
 
 function initTheme() {
   const saved = getTheme();
-  if (saved) {
-    applyTheme(saved);
-  } else {
+  let theme = saved;
+  if (!theme) {
     const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    applyTheme(prefersDark ? "dark" : "light");
+    theme = prefersDark ? "dark" : "light";
   }
+  applyTheme(theme);
 }
 
 function updateSoundIcon(isMuted) {
@@ -136,12 +157,23 @@ async function boot() {
     return;
   }
 
-  // Handle temporary ?preview=s1 .. ?preview=s11
-  const preview = urlParams.get("preview");
-  if (preview && /^s([1-9]|1[0-1])$/.test(preview)) {
-    goToScan({ sampleId: preview });
+  // Handle presenter mode (?present=1)
+  if (urlParams.has("present") && (!CONFIG.features || CONFIG.features.presenterMode !== false)) {
+    const { initPresenterMode } = await import("./presenter.js");
+    initPresenterMode();
+  }
+
+  // Handle demo mode (?demo=1)
+  if (urlParams.has("demo")) {
+    goToHome();
+    const { runDemo } = await import("./demo.js");
+    runDemo(urlParams);
     return;
   }
+
+  // Initialize analytics (will automatically ignore test/demo/present)
+  const { initAnalytics } = await import("./analytics.js");
+  initAnalytics();
 
   // Handle compare links if present in query
   let compareData = null;

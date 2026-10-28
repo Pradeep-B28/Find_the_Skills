@@ -1,10 +1,11 @@
-// What it does: GA4 and Meta Pixel event listeners and pure payload builder. No DOM.
-// Uses: config.js, content/requirements.js, js/links.js.
+// What it does: GA4 and Meta Pixel event listeners and pure payload builder.
+// Uses: config.js, content/requirements.js, js/links.js, js/events.js.
 // Used by: events.js, selftest.js, and main.js.
 
 import { CONFIG } from "../config.js";
 import { REQ_TYPES } from "../content/requirements.js";
 import { missingIdsPayload } from "./links.js";
+import { on } from "./events.js";
 
 function getCharsBand(chars) {
   const c = Number(chars) || 0;
@@ -233,5 +234,101 @@ export function payloadsFor(eventName, data = {}) {
 }
 
 export function initAnalytics() {
-  // Script loading deferred to Phase 5 per Section 11
+  if (typeof window === "undefined") return;
+
+  const search = window.location.search || "";
+  const params = new URLSearchParams(search);
+
+  // Section 6M: Never with ?test=1, ?demo=1 or ?present=1.
+  if (
+    params.has("test") ||
+    params.has("demo") ||
+    params.has("present") ||
+    window.__JPX_DEMO__ ||
+    window.__JPX_PRESENTER__
+  ) {
+    return;
+  }
+
+  const ga4Id = CONFIG.analytics?.ga4Id;
+  const metaPixelId = CONFIG.analytics?.metaPixelId;
+
+  // 1. Google Analytics 4 (GA4)
+  if (ga4Id && typeof ga4Id === "string" && ga4Id.trim().length > 0) {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga4Id)}`;
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      window.dataLayer.push(arguments);
+    }
+    window.gtag = gtag;
+    gtag("js", new Date());
+    // Section 6M: Set page_location to page address without the query
+    const cleanLocation = window.location.origin + window.location.pathname;
+    gtag("config", ga4Id, { page_location: cleanLocation });
+  }
+
+  // 2. Meta Pixel
+  if (metaPixelId && typeof metaPixelId === "string" && metaPixelId.trim().length > 0) {
+    if (!window.fbq) {
+      const fbq = function () {
+        if (fbq.callMethod) {
+          fbq.callMethod.apply(fbq, arguments);
+        } else {
+          fbq.queue.push(arguments);
+        }
+      };
+      if (!window._fbq) window._fbq = fbq;
+      fbq.push = fbq;
+      fbq.loaded = true;
+      fbq.version = "2.0";
+      fbq.queue = [];
+      window.fbq = fbq;
+
+      const script = document.createElement("script");
+      script.async = true;
+      script.src = "https://connect.facebook.net/en_US/fbevents.js";
+      document.head.appendChild(script);
+    }
+
+    window.fbq("init", metaPixelId);
+    window.fbq("track", "PageView");
+  }
+
+  // 3. Listen to all events and forward payloads
+  const events = [
+    "xray:start",
+    "xray:done",
+    "xray:few",
+    "result:shown",
+    "cta:sales",
+    "cta:program",
+    "cta:website",
+    "cta:session",
+    "share:image",
+    "share:whatsapp",
+    "share:copy",
+    "link:open"
+  ];
+
+  for (const ev of events) {
+    on(ev, (data) => {
+      if (window.__JPX_DEMO__ || window.__JPX_PRESENTER__) return;
+
+      const { ga4, meta } = payloadsFor(ev, data);
+      if (ga4 && typeof window.gtag === "function") {
+        window.gtag("event", ga4.name, ga4.params);
+      }
+      if (meta && typeof window.fbq === "function") {
+        if (meta.type === "trackCustom") {
+          window.fbq("trackCustom", meta.event, meta.params);
+        } else {
+          window.fbq("track", meta.event, meta.params);
+        }
+      }
+    });
+  }
 }

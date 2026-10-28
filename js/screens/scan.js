@@ -307,7 +307,7 @@ function showAfterScanBar(container, { jobCount, softCount, roleObj, onNext, onE
   actions.className = "after-scan-actions";
 
   const nextBtn = document.createElement("button");
-  nextBtn.className = "btn btn-primary";
+  nextBtn.className = "btn btn-primary scan-primary-btn";
   nextBtn.textContent = COPY.scan.next;
   nextBtn.addEventListener("click", () => {
     if (onNext) onNext();

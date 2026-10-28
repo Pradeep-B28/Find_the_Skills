@@ -37,12 +37,12 @@ export function render({ report, roleObj }) {
   actions.appendChild(siteBtn);
 
   const waUrl = salesUrl(CONFIG.salesWhatsApp, { role: roleObj }, report);
-  if (waUrl) {
+  if (waUrl && !window.__JPX_PRESENTER__) {
     const waBtn = document.createElement("a");
     waBtn.href = waUrl;
     waBtn.target = "_blank";
     waBtn.rel = "noopener";
-    waBtn.className = "btn btn-secondary";
+    waBtn.className = "btn btn-secondary cta-whatsapp-btn";
     waBtn.textContent = COPY.cta.whatsapp;
     actions.appendChild(waBtn);
   }

@@ -15,6 +15,9 @@ function safeGet(key) {
 }
 
 function safeSet(key, value) {
+  if (typeof window !== "undefined" && (window.__JPX_DEMO__ || window.__JPX_PRESENTER__)) {
+    return true;
+  }
   try {
     window.localStorage.setItem(key, value);
     return true;
@@ -24,6 +27,9 @@ function safeSet(key, value) {
 }
 
 function safeRemove(key) {
+  if (typeof window !== "undefined" && (window.__JPX_DEMO__ || window.__JPX_PRESENTER__)) {
+    return true;
+  }
   try {
     window.localStorage.removeItem(key);
     return true;
