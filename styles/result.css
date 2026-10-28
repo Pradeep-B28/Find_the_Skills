@@ -623,6 +623,54 @@
   color: var(--muted);
 }
 
+/* Share Card */
+.share-card {
+  margin-top: 0.5rem;
+}
+
+.share-size-pills {
+  display: inline-flex;
+  gap: 0.25rem;
+  background-color: var(--surface-2);
+  padding: 0.25rem;
+  border-radius: var(--radius-full);
+  width: fit-content;
+  border: 1px solid var(--border);
+}
+
+.size-pill {
+  border: none;
+  background: transparent;
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease);
+}
+
+.size-pill:hover {
+  color: var(--text);
+}
+
+.size-pill.active {
+  background-color: var(--surface);
+  color: var(--brand-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.share-actions-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.share-btn {
+  width: 100%;
+  justify-content: center;
+}
+
 .result-actions {
   display: flex;
   flex-wrap: wrap;

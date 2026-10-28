@@ -45,12 +45,16 @@ function initSound() {
   initSoundListener();
 }
 
-function goToHome(initialText = "") {
+function goToHome(initialText = "", compareData = null) {
   navigate("home", {
     initialText,
+    compareData,
     onStartScan: (text) => {
       lastPostText = text;
       goToScan({ text });
+    },
+    onOpenCompare: () => {
+      goToCheck();
     }
   });
 }
@@ -139,8 +143,21 @@ async function boot() {
     return;
   }
 
+  // Handle compare links if present in query
+  let compareData = null;
+  if (window.location.search && (!CONFIG.features || CONFIG.features.compareLinks !== false)) {
+    const { readCompare } = await import("./links.js");
+    compareData = readCompare(window.location.search, CONFIG.limits?.maxLinkSkills);
+    try {
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
+    } catch (e) {
+      // Ignore quietly
+    }
+  }
+
   // Default to home screen
-  goToHome();
+  goToHome("", compareData);
 }
 
 if (typeof window !== "undefined") {

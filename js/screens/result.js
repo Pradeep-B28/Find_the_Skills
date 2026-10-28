@@ -16,6 +16,7 @@ import { render as renderReadyCard } from "../cards/ready.js";
 import { render as renderReqsCard } from "../cards/reqs.js";
 import { render as renderOthersCard } from "../cards/others.js";
 import { render as renderSessionCard } from "../cards/session.js";
+import { renderShareCard } from "../cards/share.js";
 
 let containerEl = null;
 
@@ -236,6 +237,10 @@ export function enter({ onCheckAnother = null, onChangeTicks = null } = {}) {
   // Free session card
   const sessionEl = renderSessionCard(cardModel);
   if (sessionEl) rightCol.appendChild(sessionEl);
+
+  // Share card
+  const shareEl = renderShareCard(cardModel);
+  if (shareEl) rightCol.appendChild(shareEl);
 
   layoutGrid.appendChild(rightCol);
   containerEl.appendChild(layoutGrid);

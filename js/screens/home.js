@@ -1,12 +1,15 @@
-// What it does: home screen paste card, character counter, clipboard paste, sample chips, and hero film loop.
-// Uses: config.js, js/copy.js, js/content.js, js/session.js, js/events.js, js/fx/hero.js.
+// What it does: home screen paste card, character counter, clipboard paste, sample chips, hero film loop, and compare banner.
+// Uses: config.js, js/copy.js, js/content.js, js/session.js, js/events.js, js/score.js, js/engine/gap.js, js/fx/hero.js.
 // Used by: js/main.js, js/router.js.
 
 import { CONFIG } from "../../config.js";
 import { COPY, t } from "../copy.js";
-import { sample as getSample } from "../content.js";
+import { sample as getSample, role as getRole, softIds } from "../content.js";
 import { emit } from "../events.js";
 import { mountHero, stopHero } from "../fx/hero.js";
+import { bannerText } from "../score.js";
+import { splitKinds } from "../engine/gap.js";
+import { startFromLink } from "../session.js";
 
 let containerEl = null;
 
@@ -27,7 +30,7 @@ export function mount(rootEl) {
   return containerEl;
 }
 
-export function enter({ onStartScan = null, initialText = "" } = {}) {
+export function enter({ onStartScan = null, initialText = "", compareData = null, onOpenCompare = null } = {}) {
   if (!containerEl) return;
   leave();
 
@@ -64,6 +67,42 @@ export function enter({ onStartScan = null, initialText = "" } = {}) {
   subtitle.className = "home-subtitle";
   subtitle.textContent = COPY.home.subtitle;
   leftCol.appendChild(subtitle);
+
+  // Compare Banner (if opened from a compare link)
+  if (compareData && (!CONFIG.features || CONFIG.features.compareLinks !== false)) {
+    const split = splitKinds(compareData.ids, softIds);
+    const isSoftOnly = split.job.length === 0;
+    const count = isSoftOnly ? split.soft.length : split.job.length;
+    const kindWord = isSoftOnly ? "soft skills" : "job skills";
+    const roleObj = compareData.roleId ? getRole(compareData.roleId) : null;
+    const text = bannerText(compareData, roleObj, count, kindWord);
+
+    const banner = document.createElement("div");
+    banner.className = "compare-banner";
+
+    const bannerP = document.createElement("p");
+    bannerP.className = "banner-text";
+    bannerP.textContent = text;
+    banner.appendChild(bannerP);
+
+    const bannerBtn = document.createElement("button");
+    bannerBtn.type = "button";
+    bannerBtn.className = "btn btn-primary banner-btn";
+    bannerBtn.textContent = COPY.home.compareBtn;
+    bannerBtn.addEventListener("click", () => {
+      startFromLink(compareData);
+      emit("link:open", {
+        count: compareData.ids.length,
+        hasM: compareData.m !== null && compareData.m !== undefined
+      });
+      if (onOpenCompare) {
+        onOpenCompare();
+      }
+    });
+    banner.appendChild(bannerBtn);
+
+    leftCol.appendChild(banner);
+  }
 
   // Paste Card
   const card = document.createElement("div");

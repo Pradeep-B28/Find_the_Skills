@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Post X-Ray OG Preview</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 45%, #ECFEFF 100%);
+      color: #111827;
+      position: relative;
+    }
+    .brand-top-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, #059669, #0D9488, #06B6D4);
+    }
+    .og-container {
+      width: 1200px;
+      height: 630px;
+      padding: 48px 60px;
+      display: flex;
+      gap: 48px;
+      align-items: center;
+    }
+    .left-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .brand-logo {
+      height: 40px;
+      width: auto;
+    }
+    .brand-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: #059669;
+    }
+    .og-title {
+      font-size: 58px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #111827;
+      margin-bottom: 18px;
+    }
+    .og-title-grad {
+      background: linear-gradient(90deg, #059669, #0D9488, #06B6D4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .og-sub {
+      font-size: 22px;
+      line-height: 1.45;
+      color: #374151;
+      margin-bottom: 32px;
+    }
+    .badge-row {
+      display: flex;
+      gap: 16px;
+    }
+    .counter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      border: 1px solid #E5E7EB;
+      background: #FFFFFF;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .counter-pill.job {
+      color: #0891B2;
+      border-color: rgba(34, 211, 238, 0.4);
+      background: #ECFEFF;
+    }
+    .counter-pill.soft {
+      color: #059669;
+      border-color: rgba(52, 211, 153, 0.4);
+      background: #ECFDF5;
+    }
+
+    .right-col {
+      width: 540px;
+      height: 490px;
+      position: relative;
+    }
+    .film-card {
+      width: 100%;
+      height: 100%;
+      background: #050B16;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px -12px rgba(15,23,42,0.45);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 24px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #94A3B8;
+    }
+    /* Grid */
+    .film-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(34, 211, 238, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.07) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+    /* Corner brackets */
+    .c-bracket {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-color: rgba(148, 163, 184, 0.5);
+      border-style: solid;
+      pointer-events: none;
+    }
+    .tl { top: 12px; left: 12px; border-width: 2px 0 0 2px; }
+    .tr { top: 12px; right: 12px; border-width: 2px 2px 0 0; }
+    .bl { bottom: 12px; left: 12px; border-width: 0 0 2px 2px; }
+    .br { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; }
+
+    /* Highlights */
+    .hl-job {
+      background: rgba(34, 211, 238, 0.22);
+      color: #ECFEFF;
+      box-shadow: 0 0 10px rgba(34, 211, 238, 0.45);
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .hl-req {
+      background: rgba(251, 191, 36, 0.22);
+      color: #FEF3C7;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .hl-soft {
+      background: rgba(52, 211, 153, 0.22);
+      color: #ECFDF5;
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.35);
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    /* Beam line */
+    .beam-line {
+      position: absolute;
+      top: 245px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #22D3EE 15%, #10B981 50%, #22D3EE 85%, transparent);
+      box-shadow: 0 0 14px 4px rgba(34, 211, 238, 0.6);
+    }
+    .unscanned-text {
+      color: #475569;
+    }
+    .film-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 11px;
+      color: #64748B;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="brand-top-bar"></div>
+  <div class="og-container">
+    <div class="left-col">
+      <div class="brand-row">
+        <img src="../assets/logo.png" alt="Wrench Wise" class="brand-logo" onerror="this.style.display='none'">
+        <span class="brand-name">Wrench Wise</span>
+      </div>
+      <h1 class="og-title">
+        Job Post <span class="og-title-grad">X-Ray</span>
+      </h1>
+      <p class="og-sub">
+        Paste any job post. See every skill it asks for, and how many you already have.
+      </p>
+      <div class="badge-row">
+        <div class="counter-pill job">Job skills 6</div>
+        <div class="counter-pill soft">Soft skills 0</div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="film-card">
+        <div class="film-grid"></div>
+        <div class="c-bracket tl"></div>
+        <div class="c-bracket tr"></div>
+        <div class="c-bracket bl"></div>
+        <div class="c-bracket br"></div>
+        <div class="beam-line"></div>
+
+        <div class="film-header">
+          <span>X-RAY FILM SCAN // WW-01</span>
+          <span>LIVE ANALYSIS</span>
+        </div>
+
+        <div>
+          Full Stack Developer (<span class="hl-job">MERN</span>) | <span class="hl-req">0 to 2 years</span> | <span class="hl-req">Chennai</span> (<span class="hl-req">Hybrid</span>)<br><br>
+          About the role<br>
+          We are a product startup building tools for small clinics. You will work with the rest of the <span class="hl-soft">team</span> to ship features every week.<br><br>
+          What you will do<br>
+          • Build responsive web pages with <span class="hl-job">React</span>, <span class="hl-job">HTML5</span> and <span class="hl-job">CSS3</span><br>
+          • Write <span class="hl-job">REST APIs</span> using <span class="hl-job">Node.js</span> and <span class="hl-job">Express</span><br>
+          • Design <span class="hl-job">MongoDB</span> schemas and write clean queries<br>
+          <span class="unscanned-text">
+          • Review pull requests on GitHub and use Git every day<br><br>
+          Requirements<br>
+          • B.E., B.Tech, BCA or MCA<br>
+          • Strong JavaScript (ES6+) fundamentals
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
