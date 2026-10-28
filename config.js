@@ -7,7 +7,7 @@ export const CONFIG = {
 
   // The live address, with no slash at the end, for example "https://job-post-xray.vercel.app".
   // Set in Phase 6. While empty, the app uses the address it was opened from.
-  siteUrl: "",
+  siteUrl: "https://job-post-xray.vercel.app",
 
   // Programs the app may recommend. The order breaks ties (see content/SCHEMA.md).
   // Remove an id to stop recommending that program. Ids are in content/programs.js.
