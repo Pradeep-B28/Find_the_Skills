@@ -35,6 +35,67 @@ body {
   background-attachment: fixed;
   color: var(--text);
   overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-size: 24px 24px;
+  background-image:
+    linear-gradient(to right, rgba(5, 150, 105, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(5, 150, 105, 0.05) 1px, transparent 1px);
+}
+
+/* Two soft glows drifting slowly (20-30s loops) */
+.bg-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform, opacity;
+}
+
+.bg-glow-1 {
+  width: 480px;
+  height: 480px;
+  background: var(--accent);
+  opacity: 0.08;
+  top: -100px;
+  right: -100px;
+  animation: driftGlow1 25s infinite ease-in-out alternate;
+}
+
+.bg-glow-2 {
+  width: 520px;
+  height: 520px;
+  background: var(--brand);
+  opacity: 0.08;
+  bottom: -100px;
+  left: -150px;
+  animation: driftGlow2 28s infinite ease-in-out alternate;
+}
+
+@keyframes driftGlow1 {
+  0% { transform: translate(0, 0) scale(1); opacity: 0.06; }
+  50% { transform: translate(-80px, 110px) scale(1.15); opacity: 0.09; }
+  100% { transform: translate(-30px, 50px) scale(0.95); opacity: 0.07; }
+}
+
+@keyframes driftGlow2 {
+  0% { transform: translate(0, 0) scale(1); opacity: 0.07; }
+  50% { transform: translate(110px, -80px) scale(1.12); opacity: 0.09; }
+  100% { transform: translate(50px, -30px) scale(1.0); opacity: 0.06; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-glow {
+    animation: none !important;
+  }
 }
 
 /* Tabular numbers for all numbers */
@@ -262,6 +323,50 @@ body {
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  .home-container {
+    max-width: 1100px;
+  }
+}
+
+.home-layout-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .home-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 440px;
+    gap: 3rem;
+    align-items: center;
+  }
+}
+
+.home-left-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-right-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-film-wrapper {
+  perspective: 1000px;
+  width: 100%;
+  margin: 1rem auto;
+}
+
+.hero-film-panel {
+  transform-style: preserve-3d;
+  transition: transform 150ms var(--ease-out);
 }
 
 .home-eyebrow {

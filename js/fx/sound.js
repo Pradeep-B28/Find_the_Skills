@@ -1,10 +1,10 @@
-// What it does: Web Audio synthesiser for scan beam hum, skill blips, and requirement ticks.
+// What it does: Web Audio synthesiser for scan beam hum, skill blips, requirement ticks, chip click, and result fanfare.
 // Uses: config.js, js/events.js, js/store.js.
-// Used by: js/main.js, screens/scan.js.
+// Used by: js/main.js, screens/scan.js, screens/check.js, screens/result.js.
 
 import { CONFIG } from "../../config.js";
-import { on, emit } from "../events.js";
-import { getMuted, setMuted } from "../store.js";
+import { on } from "../events.js";
+import { getMuted } from "../store.js";
 
 let audioCtx = null;
 let beamOsc = null;
@@ -156,6 +156,74 @@ export function playReqTick() {
   } catch (e) {}
 }
 
+export function playTick() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  try {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.006);
+
+    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.006);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.006);
+  } catch (e) {}
+}
+
+export function playResult(isFullMatch = false) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  try {
+    // 3-note rising arpeggio: C5 (523Hz), E5 (659Hz), G5 (784Hz)
+    const notes = [523.25, 659.25, 783.99];
+    notes.forEach((freq, idx) => {
+      const start = ctx.currentTime + idx * 0.09;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, start);
+
+      gain.gain.setValueAtTime(0.07, start);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.18);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + 0.18);
+    });
+
+    if (isFullMatch) {
+      // High sparkle arpeggio
+      const sparkles = [1046.5, 1318.5, 1567.98, 2093.0];
+      sparkles.forEach((freq, idx) => {
+        const start = ctx.currentTime + 0.3 + idx * 0.06;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, start);
+
+        gain.gain.setValueAtTime(0.04, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.12);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.12);
+      });
+    }
+  } catch (e) {}
+}
+
 export function initSoundListener() {
   on("sound:toggle", ({ muted }) => {
     if (muted) {
@@ -163,7 +231,7 @@ export function initSoundListener() {
     }
   });
 
-  on("xray:start", (data) => {
+  on("xray:start", () => {
     jobBlipCount = 0;
     softBlipCount = 0;
   });
@@ -174,5 +242,14 @@ export function initSoundListener() {
 
   on("xray:few", () => {
     stopBeamHum();
+  });
+
+  on("check:toggle", () => {
+    playTick();
+  });
+
+  on("result:shown", (data) => {
+    const isFull = data && data.have === data.total && data.total > 0;
+    playResult(isFull);
   });
 }

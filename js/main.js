@@ -1,14 +1,12 @@
-// What it does: entry point for the web app, handles screen navigation, ?preview=s1..s11, and ?test=1.
-// Uses: config.js, js/store.js, js/screens/home.js, js/screens/scan.js, js/fx/sound.js.
+// What it does: entry point for the web app, handles router initialization, URL flags, theme, and sound.
+// Uses: config.js, js/store.js, js/router.js, js/fx/sound.js.
 // Used by: index.html.
 
 import { CONFIG } from "../config.js";
 import { getTheme, setTheme, getMuted, setMuted } from "./store.js";
 import { initSoundListener } from "./fx/sound.js";
-import { mount as mountHome, enter as enterHome, leave as leaveHome } from "./screens/home.js";
-import { mount as mountScan, enter as enterScan, leave as leaveScan } from "./screens/scan.js";
+import { init as initRouter, navigate } from "./router.js";
 
-let currentScreen = null;
 let lastPostText = "";
 
 function applyTheme(theme) {
@@ -47,46 +45,48 @@ function initSound() {
   initSoundListener();
 }
 
-function navigateToHome(appEl, initialText = "") {
-  if (currentScreen === "scan") leaveScan();
-  currentScreen = "home";
-
-  while (appEl.firstChild) {
-    appEl.removeChild(appEl.firstChild);
-  }
-
-  mountHome(appEl);
-  enterHome({
+function goToHome(initialText = "") {
+  navigate("home", {
     initialText,
     onStartScan: (text) => {
       lastPostText = text;
-      navigateToScan(appEl, { text });
+      goToScan({ text });
     }
   });
 }
 
-function navigateToScan(appEl, { sampleId = null, text = null } = {}) {
-  if (currentScreen === "home") leaveHome();
-  currentScreen = "scan";
-
-  while (appEl.firstChild) {
-    appEl.removeChild(appEl.firstChild);
-  }
-
-  mountScan(appEl);
-  enterScan({
+function goToScan({ sampleId = null, text = null } = {}) {
+  navigate("scan", {
     sampleId,
     text,
     onEditPost: (editText) => {
-      navigateToHome(appEl, editText || lastPostText);
+      goToHome(editText || lastPostText);
     },
     onNext: () => {
-      // In Phase 2, this is the end of the scan flow; Phase 3 will introduce tick screen
-      const live = document.getElementById("live-region");
-      if (live) live.textContent = "Tick screen ready for Phase 3";
+      goToCheck();
     },
     onTrySample: () => {
-      navigateToScan(appEl, { sampleId: "s1" });
+      goToScan({ sampleId: "s1" });
+    }
+  });
+}
+
+function goToCheck() {
+  navigate("check", {
+    onShowMatch: () => {
+      goToResult();
+    }
+  });
+}
+
+function goToResult() {
+  navigate("result", {
+    onCheckAnother: () => {
+      lastPostText = "";
+      goToHome();
+    },
+    onChangeTicks: () => {
+      goToCheck();
     }
   });
 }
@@ -118,9 +118,11 @@ async function boot() {
     footerVer.textContent = `v${CONFIG.version}`;
   }
 
-  const urlParams = new URLSearchParams(window.location.search);
   const appEl = document.getElementById("app");
   if (!appEl) return;
+  initRouter(appEl);
+
+  const urlParams = new URLSearchParams(window.location.search);
 
   // Handle ?test=1
   if (urlParams.has("test") || urlParams.get("test") === "1") {
@@ -133,12 +135,12 @@ async function boot() {
   // Handle temporary ?preview=s1 .. ?preview=s11
   const preview = urlParams.get("preview");
   if (preview && /^s([1-9]|1[0-1])$/.test(preview)) {
-    navigateToScan(appEl, { sampleId: preview });
+    goToScan({ sampleId: preview });
     return;
   }
 
   // Default to home screen
-  navigateToHome(appEl);
+  goToHome();
 }
 
 if (typeof window !== "undefined") {

@@ -1,11 +1,12 @@
-// What it does: home screen paste card, character counter, clipboard paste, sample chips.
-// Uses: config.js, js/copy.js, js/content.js, js/session.js, js/events.js.
+// What it does: home screen paste card, character counter, clipboard paste, sample chips, and hero film loop.
+// Uses: config.js, js/copy.js, js/content.js, js/session.js, js/events.js, js/fx/hero.js.
 // Used by: js/main.js, js/router.js.
 
 import { CONFIG } from "../../config.js";
 import { COPY, t } from "../copy.js";
 import { sample as getSample } from "../content.js";
 import { emit } from "../events.js";
+import { mountHero, stopHero } from "../fx/hero.js";
 
 let containerEl = null;
 
@@ -38,23 +39,31 @@ export function enter({ onStartScan = null, initialText = "" } = {}) {
   const minChars = CONFIG.limits?.minChars || 40;
   let isSampleSelected = false;
 
+  // Grid layout (two columns on laptop)
+  const layoutGrid = document.createElement("div");
+  layoutGrid.className = "home-layout-grid";
+
+  // LEFT COLUMN: text, paste card, samples
+  const leftCol = document.createElement("div");
+  leftCol.className = "home-left-col";
+
   // Eyebrow
   const eyebrow = document.createElement("div");
   eyebrow.className = "home-eyebrow";
   eyebrow.textContent = COPY.home.eyebrow;
-  containerEl.appendChild(eyebrow);
+  leftCol.appendChild(eyebrow);
 
   // Title
   const title = document.createElement("h1");
   title.className = "home-title";
   title.textContent = COPY.home.title;
-  containerEl.appendChild(title);
+  leftCol.appendChild(title);
 
   // Subtitle
   const subtitle = document.createElement("p");
   subtitle.className = "home-subtitle";
   subtitle.textContent = COPY.home.subtitle;
-  containerEl.appendChild(subtitle);
+  leftCol.appendChild(subtitle);
 
   // Paste Card
   const card = document.createElement("div");
@@ -145,7 +154,7 @@ export function enter({ onStartScan = null, initialText = "" } = {}) {
   privacy.appendChild(privacyText);
   card.appendChild(privacy);
 
-  containerEl.appendChild(card);
+  leftCol.appendChild(card);
 
   function updateCharCount() {
     const len = textarea.value.length;
@@ -266,7 +275,16 @@ export function enter({ onStartScan = null, initialText = "" } = {}) {
   }
 
   sampleSection.appendChild(chipsContainer);
-  containerEl.appendChild(sampleSection);
+  leftCol.appendChild(sampleSection);
+  layoutGrid.appendChild(leftCol);
+
+  // RIGHT COLUMN: Hero film loop
+  const rightCol = document.createElement("div");
+  rightCol.className = "home-right-col";
+  mountHero(rightCol);
+  layoutGrid.appendChild(rightCol);
+
+  containerEl.appendChild(layoutGrid);
 
   // How it works section (3 steps)
   const howSection = document.createElement("div");
@@ -327,5 +345,5 @@ export function enter({ onStartScan = null, initialText = "" } = {}) {
 }
 
 export function leave() {
-  // Cleanup if needed
+  stopHero();
 }

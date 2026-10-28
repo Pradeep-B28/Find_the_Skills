@@ -1,0 +1,634 @@
+/*
+  styles/result.css
+  Styles for check screen (ticking skills), result screen (ring, tier stamp, lines, chips),
+  and modular result cards.
+  Uses tokens from tokens.css.
+*/
+
+/* --- TICK / CHECK SCREEN --- */
+
+.check-screen {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding-bottom: 5rem; /* space for sticky bottom bar */
+}
+
+@media (min-width: 900px) {
+  .check-screen {
+    max-width: 1100px;
+    padding-bottom: 2rem;
+  }
+}
+
+.check-header {
+  margin-bottom: 1.5rem;
+}
+
+.check-title {
+  font-size: 1.625rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 900px) {
+  .check-title {
+    font-size: 2rem;
+  }
+}
+
+.check-sub {
+  font-size: 0.9375rem;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+/* Role bar / guess */
+.role-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.75rem 0.35rem 1rem;
+  width: fit-content;
+}
+
+.role-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.role-select {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* Remember ticks banner / switch */
+.from-last-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--brand-soft);
+  color: var(--brand-strong);
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+.remember-switch-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.remember-switch-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+
+/* Laptop 2-column layout */
+.check-layout-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .check-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 2rem;
+    align-items: start;
+  }
+}
+
+.check-summary-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .check-summary-sidebar {
+    position: sticky;
+    top: 5rem;
+  }
+}
+
+/* Skill group */
+.skill-group {
+  margin-bottom: 1.5rem;
+}
+
+.skill-group-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 0.625rem;
+}
+
+.skill-chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Chip buttons */
+.chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background-color: var(--chip-bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 150ms var(--ease-out), background-color 150ms var(--ease), border-color 150ms var(--ease), color 150ms var(--ease);
+  user-select: none;
+}
+
+.chip-btn:hover {
+  background-color: var(--surface-2);
+}
+
+.chip-btn[aria-pressed="true"] {
+  background-color: var(--have-bg);
+  color: var(--have-text);
+  border-color: var(--brand);
+  font-weight: 600;
+}
+
+.chip-btn:active {
+  transform: scale(0.96);
+}
+
+.chip-check-icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.chip-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-2);
+  color: var(--muted);
+}
+
+.chip-btn[aria-pressed="true"] .chip-badge {
+  background-color: rgba(6, 95, 70, 0.15);
+  color: var(--have-text);
+}
+
+/* Soft skills heading */
+.soft-skills-header {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.soft-skills-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.soft-skills-note {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+/* "Also asks for" card */
+.reqs-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reqs-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.reqs-card-note {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.reqs-group-row {
+  margin-top: 0.5rem;
+}
+
+.reqs-group-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+}
+
+.reqs-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.req-pill {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  background-color: var(--req-bg);
+  color: var(--req-text);
+  border: 1px solid var(--req-border);
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+/* Show in the post details */
+.show-post-details {
+  margin-top: 1.5rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 1rem 1.25rem;
+}
+
+.show-post-summary {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.show-post-content {
+  margin-top: 1rem;
+}
+
+/* Check screen note */
+.check-note {
+  margin-top: 1.5rem;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Sticky Bottom Bar */
+.sticky-tick-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+  padding: 0.75rem 1rem;
+}
+
+.sticky-tick-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 900px) {
+  .sticky-tick-inner {
+    max-width: 1100px;
+  }
+}
+
+.sticky-tick-count {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- RESULT SCREEN --- */
+
+.result-screen {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  .result-screen {
+    max-width: 1100px;
+  }
+}
+
+.result-layout-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 900px) {
+  .result-layout-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+}
+
+.result-left-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+@media (min-width: 900px) {
+  .result-left-col {
+    position: sticky;
+    top: 5rem;
+    align-items: center;
+  }
+}
+
+.result-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Ring & Stamp Area */
+.result-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.ring-wrapper {
+  position: relative;
+  width: 168px;
+  height: 168px;
+}
+
+@media (min-width: 900px) {
+  .ring-wrapper {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.ring-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.ring-track-circle {
+  fill: none;
+  stroke: var(--ring-track);
+  stroke-width: 10;
+}
+
+.ring-fill-circle {
+  fill: none;
+  stroke: url(#brandGradStroke);
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 900ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ring-center-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ring-score-text {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 900px) {
+  .ring-score-text {
+    font-size: 2.5rem;
+  }
+}
+
+.ring-sub-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.ring-pct-badge {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--brand);
+  margin-top: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tier stamp */
+.tier-stamp {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.35rem 0.85rem;
+  border: 2px solid var(--brand);
+  border-radius: var(--radius-sm);
+  color: var(--brand);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transform: rotate(-6deg) scale(1);
+  transition: transform 220ms var(--ease-out);
+}
+
+/* Match & Soft lines */
+.match-line-text {
+  font-size: 1.1875rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-top: 1rem;
+  line-height: 1.35;
+}
+
+.soft-line-row {
+  margin-top: 0.75rem;
+  width: 100%;
+  max-width: 280px;
+}
+
+.soft-line-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-bottom: 0.35rem;
+}
+
+.soft-bar-track {
+  width: 100%;
+  height: 6px;
+  background-color: var(--ring-track);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.soft-bar-fill {
+  height: 100%;
+  background-color: var(--soft-bar);
+  border-radius: var(--radius-full);
+  transition: width 900ms var(--ease);
+}
+
+/* Chip lists: You have / To learn */
+.chip-lists-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  text-align: left;
+  width: 100%;
+}
+
+.chip-list-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chip-list-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.chips-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip-have {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  background-color: var(--have-bg);
+  color: var(--have-text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.chip-have svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.chip-miss {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  background-color: var(--miss-bg);
+  color: var(--miss-text);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+/* Lower Cards */
+.result-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.result-card-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.result-card-line {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.result-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.result-card-note {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
