@@ -1,0 +1,318 @@
+/*
+  styles/xray.css
+  The X-ray film panel, beam animation, highlight states, and after-scan controls.
+  Uses tokens from tokens.css. Used by screens/scan.js and fx/film.js.
+*/
+
+.film-panel {
+  position: relative;
+  background-color: var(--film-bg);
+  border-radius: var(--radius-film);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 760px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Faint grid background */
+.film-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-size: 24px 24px;
+  background-image:
+    linear-gradient(to right, var(--film-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--film-grid) 1px, transparent 1px);
+  z-index: 1;
+}
+
+/* Four L-shaped corner marks */
+.film-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  z-index: 4;
+  border-color: var(--film-mark);
+  border-style: solid;
+}
+.film-corner-tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+.film-corner-tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
+.film-corner-bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
+.film-corner-br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+/* Top film strip */
+.film-header {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem 0.5rem 1.25rem;
+  background: rgba(5, 11, 22, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 0.5rem;
+}
+
+.film-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--film-label);
+  font-weight: 600;
+}
+
+.film-counters {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--film-label);
+}
+
+.film-counter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.film-counter-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 14px;
+  color: #FFFFFF;
+}
+
+/* Key strip under header */
+.film-key {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.35rem 1.25rem 0.5rem 1.25rem;
+  font-size: 11px;
+  color: var(--film-label);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.key-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.key-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.key-dot-job { background-color: var(--film-glow); box-shadow: 0 0 6px var(--film-glow); }
+.key-dot-soft { background-color: var(--film-soft-glow); box-shadow: 0 0 6px var(--film-soft-glow); }
+.key-dot-req { border: 1.5px dashed var(--film-req-line); background: transparent; }
+
+/* Scrollable post content viewport */
+.film-viewport {
+  position: relative;
+  z-index: 2;
+  height: 60dvh;
+  max-height: 62dvh;
+  overflow-y: hidden;
+  padding: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .film-viewport {
+    height: 68dvh;
+    max-height: 70dvh;
+    padding: 1.5rem;
+  }
+}
+
+.film-body {
+  position: relative;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--film-text-pre);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  transform: translateY(0px);
+  will-change: transform;
+}
+
+@media (min-width: 900px) {
+  .film-body {
+    font-size: 15px;
+  }
+}
+
+.film-body.scan-finished {
+  color: var(--film-text);
+  transition: color 400ms var(--ease);
+}
+
+/* The Scan Beam */
+.film-beam-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 10;
+  will-change: transform, opacity;
+}
+
+.film-beam-line {
+  height: 3px;
+  width: 100%;
+  background: var(--film-beam);
+  box-shadow: 0 0 24px var(--film-glow), 0 0 8px #FFFFFF;
+}
+
+.film-beam-trail {
+  position: absolute;
+  bottom: 3px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to top, rgba(34, 211, 238, 0.18), transparent);
+}
+
+/* Highlights */
+mark.film-mark {
+  background: transparent;
+  color: inherit;
+  border-radius: 4px;
+  padding: 0 2px;
+  transition: transform 220ms var(--ease-out), background-color 220ms var(--ease), color 220ms var(--ease);
+  display: inline-block;
+}
+
+mark.hit-job.lit {
+  background-color: var(--film-hit-bg);
+  color: var(--film-hit-text);
+  outline: 1px solid var(--film-glow);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.4);
+}
+
+mark.hit-soft.lit {
+  background-color: var(--film-soft-bg);
+  color: var(--film-soft-text);
+  outline: 1px solid var(--film-soft-glow);
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
+}
+
+mark.hit-req.lit {
+  background: transparent;
+  color: var(--film-req-text);
+  border-bottom: 2px dashed var(--film-req-line);
+}
+
+.film-truncated {
+  display: block;
+  margin-top: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--film-label);
+  font-style: italic;
+}
+
+/* After-scan bar */
+.after-scan-bar {
+  margin-top: 1.25rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: slideUp 300ms var(--ease-out);
+}
+
+@media (min-width: 900px) {
+  .after-scan-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.after-scan-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.after-scan-found {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.after-scan-role {
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.after-scan-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Too few skills card */
+.few-skills-card {
+  margin-top: 1.25rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  text-align: center;
+  animation: slideUp 300ms var(--ease-out);
+}
+
+.few-skills-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.few-skills-body {
+  font-size: 0.9375rem;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+
+.few-skills-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}

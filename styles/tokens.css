@@ -1,0 +1,129 @@
+/*
+  styles/tokens.css
+  Design tokens for Job Post X-Ray, matched to wrench-wise.com.
+  Used across all screens, components, and read via getComputedStyle.
+*/
+
+:root,
+[data-theme="light"] {
+  /* Site tokens - Light */
+  --bg: #FFFFFF;
+  --bg-grad: linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 45%, #ECFEFF 100%);
+  --surface: #FFFFFF;
+  --surface-2: #F3F4F6;
+  --border: #E5E7EB;
+  --text: #111827;
+  --text-2: #374151;
+  --muted: #6B7280;
+  --brand: #059669;
+  --brand-strong: #047857;
+  --brand-soft: #D1FAE5;
+  --accent: #0891B2;
+  --success: #059669;
+  --warn: #B45309;
+  --error: #E11D48;
+
+  /* Chip, ring and requirement tokens - Light */
+  --chip-bg: #FFFFFF;
+  --have-bg: #D1FAE5;
+  --have-text: #065F46;
+  --miss-bg: #FFF1F2;
+  --miss-text: #9F1239;
+  --ring-track: #E5E7EB;
+  --soft-bar: #10B981;
+  --req-bg: #FFFBEB;
+  --req-text: #92400E;
+  --req-border: #FDE68A;
+
+  /* Film tokens - Light (film is dark in both themes) */
+  --film-bg: #050B16;
+  --film-grid: rgba(34, 211, 238, 0.07);
+  --film-mark: rgba(148, 163, 184, 0.45);
+  --film-label: #94A3B8;
+  --film-text-pre: #CBD5E1;
+  --film-text: #94A3B8;
+  --film-glow: #22D3EE;
+  --film-hit-bg: rgba(34, 211, 238, 0.18);
+  --film-hit-text: #ECFEFF;
+  --film-soft-glow: #34D399;
+  --film-soft-bg: rgba(52, 211, 153, 0.18);
+  --film-soft-text: #ECFDF5;
+  --film-req-line: #FBBF24;
+  --film-req-text: #FEF3C7;
+  --film-beam: linear-gradient(90deg, transparent, #22D3EE 15%, #10B981 50%, #22D3EE 85%, transparent);
+
+  /* Shadows - Light */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.10), 0 1px 2px -1px rgba(0, 0, 0, 0.10);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.10), 0 2px 4px -2px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 20px 40px -12px rgba(15, 23, 42, 0.35);
+
+  /* Shared tokens */
+  --brand-grad: linear-gradient(90deg, #059669, #0D9488, #06B6D4);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Shapes */
+  --radius-full: 999px;
+  --radius-card: 16px;
+  --radius-film: 16px;
+  --radius-stamp: 8px;
+
+  /* Easings */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  /* Site tokens - Dark */
+  --bg: #0F172A;
+  --bg-grad: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  --surface: #1E293B;
+  --surface-2: #334155;
+  --border: #334155;
+  --text: #F1F5F9;
+  --text-2: #CBD5E1;
+  --muted: #94A3B8;
+  --brand: #10B981;
+  --brand-strong: #34D399;
+  --brand-soft: rgba(16, 185, 129, 0.15);
+  --accent: #22D3EE;
+  --success: #34D399;
+  --warn: #FBBF24;
+  --error: #FB7185;
+
+  /* Chip, ring and requirement tokens - Dark */
+  --chip-bg: #1E293B;
+  --have-bg: rgba(16, 185, 129, 0.18);
+  --have-text: #6EE7B7;
+  --miss-bg: rgba(251, 113, 133, 0.14);
+  --miss-text: #FDA4AF;
+  --ring-track: #334155;
+  --soft-bar: #34D399;
+  --req-bg: rgba(251, 191, 36, 0.12);
+  --req-text: #FCD34D;
+  --req-border: rgba(251, 191, 36, 0.35);
+
+  /* Film tokens - Dark */
+  --film-bg: #02060F;
+  --film-grid: rgba(34, 211, 238, 0.06);
+  --film-mark: rgba(148, 163, 184, 0.45);
+  --film-label: #94A3B8;
+  --film-text-pre: #CBD5E1;
+  --film-text: #94A3B8;
+  --film-glow: #22D3EE;
+  --film-hit-bg: rgba(34, 211, 238, 0.20);
+  --film-hit-text: #ECFEFF;
+  --film-soft-glow: #34D399;
+  --film-soft-bg: rgba(52, 211, 153, 0.20);
+  --film-soft-text: #ECFDF5;
+  --film-req-line: #FBBF24;
+  --film-req-text: #FEF3C7;
+  --film-beam: linear-gradient(90deg, transparent, #22D3EE 15%, #10B981 50%, #22D3EE 85%, transparent);
+
+  /* Shadows - Dark */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.40), 0 1px 2px -1px rgba(0, 0, 0, 0.40);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.40), 0 2px 4px -2px rgba(0, 0, 0, 0.40);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.40), 0 4px 6px -4px rgba(0, 0, 0, 0.40);
+  --shadow-xl: 0 20px 40px -12px rgba(0, 0, 0, 0.40);
+}

@@ -1,0 +1,8 @@
+{
+  "name": "job-post-xray",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node tools/verify-content.mjs"
+  }
+}
