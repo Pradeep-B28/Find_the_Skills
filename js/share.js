@@ -15,7 +15,7 @@ function getOrigin() {
   if (typeof window !== "undefined" && window.location && window.location.origin) {
     return window.location.origin;
   }
-  return "https://job-post-xray.vercel.app";
+  return "https://find-the-skills.vercel.app";
 }
 
 export async function shareMyMatch({ report, sessionState, roleObj = null, size = "status" }) {

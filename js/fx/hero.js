@@ -10,7 +10,7 @@ import { runScan } from "./beam.js";
 let heroContainer = null;
 let activeScan = null;
 let loopTimer = null;
-let pointerHandler = null;
+let cleanTilt = null;
 
 export function mountHero(parentEl) {
   heroContainer = document.createElement("div");
@@ -167,37 +167,65 @@ export function mountHero(parentEl) {
 }
 
 function initTilt(container, panel) {
-  let isLaptop = window.innerWidth >= 900;
-  window.addEventListener("resize", () => {
-    isLaptop = window.innerWidth >= 900;
-    if (!isLaptop) {
-      panel.style.transform = "none";
-    } else {
-      panel.style.transform = "rotateX(6deg) rotateY(-10deg)";
-    }
-  });
-
-  if (isLaptop) {
-    panel.style.transform = "rotateX(6deg) rotateY(-10deg)";
+  const supportsHover = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(hover: hover)").matches;
+  if (!supportsHover) {
+    panel.style.transform = "none";
+    return;
   }
 
-  pointerHandler = (e) => {
-    if (!isLaptop) return;
+  let rafId = null;
+  let targetRotX = 0;
+  let targetRotY = 0;
+
+  function updateTransform() {
+    panel.style.transform = `rotateX(${targetRotX.toFixed(2)}deg) rotateY(${targetRotY.toFixed(2)}deg)`;
+    rafId = null;
+  }
+
+  const onPointerMove = (e) => {
+    if (window.innerWidth < 900) return;
     const rect = container.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    if (rect.width === 0 || rect.height === 0) return;
 
-    const normX = Math.max(-1, Math.min(1, (e.clientX - centerX) / (window.innerWidth / 2)));
-    const normY = Math.max(-1, Math.min(1, (e.clientY - centerY) / (window.innerHeight / 2)));
+    // Relative offset from container center (-0.5 to 0.5)
+    const relX = (e.clientX - rect.left) / rect.width - 0.5;
+    const relY = (e.clientY - rect.top) / rect.height - 0.5;
 
-    // Follow pointer by up to 5 degrees
-    const rotX = 6 - normY * 5;
-    const rotY = -10 + normX * 5;
+    // Subtle, professional 3D micro-tilt (max ~3 degrees)
+    targetRotX = -relY * 6;
+    targetRotY = relX * 6;
 
-    panel.style.transform = `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg)`;
+    if (!rafId) {
+      rafId = requestAnimationFrame(updateTransform);
+    }
   };
 
-  window.addEventListener("pointermove", pointerHandler);
+  const onPointerEnter = () => {
+    if (window.innerWidth < 900) return;
+    panel.style.transition = "transform 0.08s ease-out, box-shadow 0.3s ease";
+  };
+
+  const onPointerLeave = () => {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    targetRotX = 0;
+    targetRotY = 0;
+    panel.style.transition = "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease";
+    panel.style.transform = "rotateX(0deg) rotateY(0deg)";
+  };
+
+  container.addEventListener("pointermove", onPointerMove);
+  container.addEventListener("pointerenter", onPointerEnter);
+  container.addEventListener("pointerleave", onPointerLeave);
+
+  cleanTilt = () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    container.removeEventListener("pointermove", onPointerMove);
+    container.removeEventListener("pointerenter", onPointerEnter);
+    container.removeEventListener("pointerleave", onPointerLeave);
+  };
 }
 
 export function stopHero() {
@@ -209,8 +237,8 @@ export function stopHero() {
     activeScan.cancel();
     activeScan = null;
   }
-  if (pointerHandler) {
-    window.removeEventListener("pointermove", pointerHandler);
-    pointerHandler = null;
+  if (cleanTilt) {
+    cleanTilt();
+    cleanTilt = null;
   }
 }

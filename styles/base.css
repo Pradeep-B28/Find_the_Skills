@@ -98,6 +98,7 @@ body::before {
   }
   .hero-film-panel {
     transform: none !important;
+    transition: none !important;
   }
   .film-beam-container {
     display: none !important;
@@ -365,14 +366,20 @@ body::before {
 }
 
 .hero-film-wrapper {
-  perspective: 1000px;
+  perspective: 1200px;
   width: 100%;
   margin: 1rem auto;
 }
 
 .hero-film-panel {
   transform-style: preserve-3d;
-  transition: transform 150ms var(--ease-out);
+  transform: rotateX(0deg) rotateY(0deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  will-change: transform;
+}
+
+.hero-film-wrapper:hover .hero-film-panel {
+  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.45), 0 0 25px rgba(5, 150, 105, 0.12);
 }
 
 .home-eyebrow {
