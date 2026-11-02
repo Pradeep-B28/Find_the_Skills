@@ -11,7 +11,7 @@
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
-  padding-bottom: 5rem; /* space for sticky bottom bar */
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)); /* space for sticky bottom bar */
 }
 
 @media (min-width: 900px) {
@@ -68,8 +68,9 @@
 
 .role-select {
   font-family: inherit;
-  font-size: 0.8125rem;
-  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  padding: 0.35rem 0.625rem;
+  min-height: 44px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface-2);
@@ -319,7 +320,7 @@
   background-color: var(--surface);
   border-top: 1px solid var(--border);
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
 }
 
 .sticky-tick-inner {

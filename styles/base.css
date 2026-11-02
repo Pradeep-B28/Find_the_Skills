@@ -23,18 +23,21 @@ html {
   line-height: 1.5;
   background-color: var(--bg);
   color: var(--text);
+  max-width: 100%;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   min-height: 100dvh;
+  max-width: 100%;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   background: var(--bg-grad);
   background-attachment: fixed;
   color: var(--text);
-  overflow-x: hidden;
   position: relative;
 }
 
